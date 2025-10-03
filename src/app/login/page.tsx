@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const role = searchParams.get("role") || "teacher";
@@ -39,14 +39,14 @@ export default function LoginPage() {
       } else {
         router.push("/student/dashboard");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#138A8E]/10 to-[#FFF48D]/10 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -73,7 +73,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a407c][#008080] focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="your@email.com"
                 required
               />
@@ -87,7 +87,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a407c] focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="••••••••"
                 required
               />
@@ -96,7 +96,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#138a8e] text-white py-3 rounded-lg font-semibold hover:bg-[#1a407c] transition-colors disabled:bg-gray-400"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -107,7 +107,7 @@ export default function LoginPage() {
               Don`t have an account?{" "}
               <Link
                 href={`/signup?role=${role}`}
-                className="text-[#1a407c] hover:underline font-semibold"
+                className="text-blue-600 hover:underline font-semibold"
               >
                 Sign up
               </Link>
@@ -122,5 +122,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

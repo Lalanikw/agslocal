@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const role = searchParams.get("role") || "teacher";
@@ -47,14 +47,14 @@ export default function SignupPage() {
 
       // Redirect to login
       router.push(`/login?role=${role}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An error occurred");
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a407c] to-[#FFDF29] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">AGS</h1>
@@ -81,7 +81,7 @@ export default function SignupPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a407c]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -96,7 +96,7 @@ export default function SignupPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a407c]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -111,7 +111,7 @@ export default function SignupPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a407c]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -126,7 +126,7 @@ export default function SignupPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, confirmPassword: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a407c]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -134,7 +134,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#1a407c] text-white py-3 rounded-lg font-semibold hover:bg-[#1a407c]/80 transition-colors disabled:bg-gray-400"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400"
             >
               {loading ? "Creating account..." : "Sign Up"}
             </button>
@@ -145,7 +145,7 @@ export default function SignupPage() {
               Already have an account?{" "}
               <Link
                 href={`/login?role=${role}`}
-                className="text-[#1a407c] hover:underline font-semibold"
+                className="text-blue-600 hover:underline font-semibold"
               >
                 Sign in
               </Link>
@@ -154,5 +154,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <SignupForm />
+    </Suspense>
   );
 }
