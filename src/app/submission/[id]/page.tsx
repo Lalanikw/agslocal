@@ -120,7 +120,7 @@ export default function SubmissionStatusPage({ params }: { params: Promise<{ id:
           </div>
 
           {submission.finalGrade && (
-            <div className="mb-6 p-6 bg-green-50 border-2 border-green-200 rounded-lg">
+            <div className="mb-6 p-6 bg-[#1a407c]/10 border-2 border-[#1a407c]/15 rounded-lg">
               <h2 className="text-xl font-bold text-[#1a407c] mb-3">Your Grade</h2>
               <p className="text-4xl font-bold text-[#1a407c]/80 mb-4">
                 {submission.finalGrade.score}/100

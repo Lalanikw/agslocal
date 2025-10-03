@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "AGS - Automated Grading System",
   description: "AI-powered homework grading platform",
+  icons: {
+    icon: "/favicon.ico",
+  }
 };
 
 export default function RootLayout({

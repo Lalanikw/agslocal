@@ -79,7 +79,7 @@ export default function SubmissionsPage() {
                       Submitted: {new Date(submission.submittedAt).toLocaleString()}
                     </p>
                     {submission.aiEvaluation && (
-                      <div className="mt-3 p-3 bg-blue-50 rounded">
+                      <div className="mt-3 p-3 bg-[#1a407c]/5 rounded">
                         <p className="font-semibold text-[#1a407c]">
                           AI Score: {submission.aiEvaluation.score}/100
                         </p>

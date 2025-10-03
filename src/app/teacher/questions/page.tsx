@@ -120,7 +120,7 @@ export default function AllQuestionsPage() {
       <div className="ml-4 flex gap-2">
         <Link
           href={`/teacher/questions/${question._id}`}
-          className="bg-[#008080]/70 text-white px-6 py-2 rounded-lg hover:bg-[#008080]/50"
+          className="bg-[#1a407c]/70 text-white px-6 py-2 rounded-lg hover:bg-[#1a407c]/50"
         >
           View Details
         </Link>
