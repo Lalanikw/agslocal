@@ -5,6 +5,11 @@ import Link from "next/link";
 
 interface Submission {
   _id: string;
+  questionId: {
+    title: string;
+    rubric: Record<string, unknown>;
+    aiModel: string;
+  }
   studentName: string;
   status: string;
   submittedAt: string;
@@ -89,7 +94,11 @@ export default function SubmissionStatusPage({ params }: { params: Promise<{ id:
       case "pending":
         return { text: "Pending", color: "yellow", message: "Your submission is queued for grading" };
       case "grading":
-        return { text: "Grading in Progress", color: "blue", message: "AI is evaluating your work..." };
+        return {
+          text: "Grading in Progress",
+          color: "blue",
+          message: "AI is evaluating your work..."
+        };
       case "teacher_review":
         return { text: "Under Teacher Review", color: "purple", message: "AI grading complete. Awaiting teacher approval." };
       case "accepted":

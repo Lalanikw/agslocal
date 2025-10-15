@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 interface Submission {
   _id: string;
-  questionId: { title: string; rubric: Record<string, unknown> };
+  questionId: { title: string; rubric: Record<string, unknown>; aiModel: string};
   studentName: string;
   studentEmail: string;
   content: string;
@@ -105,18 +105,27 @@ export default function ReviewSubmissionPage({ params }: { params: Promise<{ id:
           </div>
 
           {/* AI Grade */}
-          <div className="mb-6 p-6 bg-blue-50 border-2 border-[#138A8E]/20 rounded">
-            <h2 className="text-xl font-bold text-[#1a407c] mb-3">AI Evaluation</h2>
-            <p className="text-3xl font-bold text-[#1a407c] mb-4">
-              Score: {submission.aiEvaluation.score}/100
-            </p>
-            <div className="bg-white p-4 rounded">
-              <h3 className="font-semibold mb-2">Feedback:</h3>
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {submission.aiEvaluation.feedback}
-              </p>
-            </div>
-          </div>
+          
+<div className="mb-6 p-6 bg-blue-50 border-2 border-blue-200 rounded-lg">
+  <div className="flex justify-between items-start mb-3">
+    <h2 className="text-xl font-bold text-blue-900">AI Evaluation</h2>
+    <span className="px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-xs font-semibold">
+      {submission.questionId.aiModel === "gpt-4o" ? "GPT-4o (Premium)" : "GPT-4o Mini"}
+    </span>
+  </div>
+  <div className="mb-4 p-4 bg-white rounded-lg border-2 border-blue-300">
+    <p className="text-3xl font-bold text-blue-700">
+      Score: {submission.aiEvaluation.score}/100
+    </p>
+  </div>
+  <div className="bg-white p-6 rounded-lg">
+    <h3 className="font-semibold mb-3 text-gray-800">Detailed Feedback:</h3>
+    <div 
+      className="grading-feedback prose prose-sm max-w-none"
+      dangerouslySetInnerHTML={{ __html: submission.aiEvaluation.feedback }}
+    />
+  </div>
+</div>
 
           {/* Student Answer */}
           <div className="mb-6">

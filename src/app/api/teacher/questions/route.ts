@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { title, description, totalMarks, rubricText } = await request.json();
+    const { title, description, totalMarks, rubricText, aiModel } = await request.json();
 
     await connectDB();
 
@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
         sections: [],
         gradingInstructions: rubricText,
       },
+      aiModel: aiModel || "gpt-4o-mini",
       settings: {
         requireTeacherReview: true,
       },

@@ -5,7 +5,11 @@ import Link from "next/link";
 
 interface Submission {
   _id: string;
-  questionId: { title: string };
+  questionId: {
+    title: string;
+    rubric: Record<string, unknown>;
+    aiModel: string;
+  }
   studentName: string;
   studentEmail: string;
   submittedAt: string;
@@ -109,6 +113,10 @@ export default function AllSubmissionsPage() {
                       <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(submission.status)}`}>
                         {submission.status.replace("_", " ").toUpperCase()}
                       </span>
+                      {submission.questionId?.aiModel === "gpt-4o" && (
+                        <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                          Premium Model
+                        </span>)}
                     </div>
                     <p className="text-slate-600 mb-1">
                       Student: {submission.studentName} ({submission.studentEmail})

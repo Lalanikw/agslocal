@@ -25,15 +25,21 @@ const QuestionSchema = new mongoose.Schema({
   rubric: {
     totalMarks: { type: Number, required: true },
     sections: [SectionSchema],
-    gradingInstructions: { type: String }, // Overall instructions for AI
+    gradingInstructions: { type: String },
   },
   
-  // Submission Settings
+  // ADD THIS
+  aiModel: { 
+    type: String, 
+    enum: ["gpt-4o-mini", "gpt-4o"],
+    default: "gpt-4o-mini" 
+  },
+  
   settings: {
     deadline: { type: Date },
     allowLateSubmissions: { type: Boolean, default: false },
     maxAttempts: { type: Number, default: 1 },
-    requireTeacherReview: { type: Boolean, default: true }, // Your workflow
+    requireTeacherReview: { type: Boolean, default: true },
   },
   
   createdAt: { type: Date, default: Date.now },

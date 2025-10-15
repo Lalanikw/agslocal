@@ -10,6 +10,7 @@ export default function CreateQuestionPage() {
     description: "",
     totalMarks: 100,
     rubricText: "",
+    aiModel: "gpt-4o-mini" as "gpt-4o-mini" | "gpt-4o",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -99,6 +100,20 @@ export default function CreateQuestionPage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a407c]/50"
                 required
               />
+              <label className="block text-gray-700 font-semibold mb-2">
+    AI Grading Model *
+          </label>
+          <select
+            value={formData.aiModel}
+            onChange={(e) => setFormData({ ...formData, aiModel: e.target.value as "gpt-4o-mini" | "gpt-4o" })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="gpt-4o-mini">GPT-4o Mini (Fast & Cheap - ~$0.01/grading)</option>
+            <option value="gpt-4o">GPT-4o (Premium - ~$0.05/grading)</option>
+          </select>
+          <p className="text-sm text-gray-500 mt-2">
+            Choose the AI model for grading. Mini is recommended for most assignments.
+          </p>
             </div>
 
             <div className="mb-6">
