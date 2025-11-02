@@ -45,7 +45,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#138A8E]/10 to-[#FFF48D]/10 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">AGS</h1>
@@ -93,7 +93,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+              className="w-full bg-[#1a407c] text-white py-3 rounded-lg font-semibold hover:bg-[#1a407c]/90 transition-colors disabled:bg-gray-400"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -104,7 +104,7 @@ function LoginForm() {
               Don&apos;t have an account?{" "}
               <Link
                 href={`/signup?role=${role}`}
-                className="text-blue-600 hover:underline font-semibold"
+                className="text-[#1a407c] hover:underline font-semibold"
               >
                 Sign up
               </Link>
