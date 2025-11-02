@@ -49,9 +49,14 @@ GRADING INSTRUCTIONS:
 1. List down each point in the marking scheme. For each point:
    - If the student mentioned it, show the EXACT excerpt (full sentence) from the student answer
    - If NOT mentioned, explicitly state "NOT MENTIONED"
-   - Evaluate the correctness of the answer
-   - Assign marks (full or partial) with clear justification
-   - Note: Student just needs to MENTION the point, not describe in detail
+   - Evaluate the correctness AND completeness of the answer
+   - Assign marks based on depth of understanding:
+     * Full marks (100%): Clear explanation with mechanism/details/examples
+     * Good marks (70-80%): Correct but missing some details
+     * Partial marks (40-60%): Mentioned but superficial or lacks key elements
+     * Minimal marks (10-30%): Vague mention without proper explanation
+     * Zero marks: Not mentioned or completely incorrect
+   - Be strict with partial marks - students must demonstrate understanding, not just mention terms
 
 2. Calculate marks for each section and the total score
 
@@ -59,10 +64,10 @@ GRADING INSTRUCTIONS:
    - Bullet points for each marking scheme point
    - Clear section headings
    - Highlighted excerpts from student answers
-   - Justification for marks awarded
+   - Justification for marks awarded (explain why full vs partial)
    - Section totals and final score
 
-4. Be concise, accurate, and to the point
+4. Be rigorous and accurate in assessment
 5. Do NOT include preambles like "Here is the analysis" - start directly with the evaluation
 6. Do NOT format as tables - use bullet points
 7. Do NOT include triple backticks or html identifiers

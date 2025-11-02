@@ -1,0 +1,16 @@
+Pharmacological Basis of ACE Inhibitors in Heart Failure with Reduced Ejection Fraction (HFrEF)
+
+ACE inhibitors are used in heart failure because they help the heart work better.
+1. Mechanism of Action
+ACE inhibitors block an enzyme called ACE. This enzyme converts angiotensin I to angiotensin II. When you block ACE, you get less angiotensin II. Angiotensin II makes blood vessels constrict, so having less of it means blood vessels can relax more.
+ACE inhibitors also affect aldosterone. When angiotensin II goes down, aldosterone also goes down. Aldosterone makes the body hold onto salt and water, so less aldosterone means less fluid retention.
+There is also something about bradykinin. ACE breaks down bradykinin, so when ACE is blocked, bradykinin increases. This can cause coughing in some patients.
+2. Effects on Heart and Aldosterone
+Because aldosterone is reduced, there is less fluid in the body. This helps the heart because it doesn't have to pump as much blood. Patients feel better and can breathe easier.
+The heart output improves because the heart doesn't have to work as hard. This is good for heart failure patients.
+3. Direct Effects on Vessels and Heart
+Angiotensin II causes vasoconstriction. ACE inhibitors reduce angiotensin II, so there is vasodilation instead. This lowers blood pressure.
+When blood pressure is lower, the heart has an easier time pumping blood. This reduces the workload on the heart.
+4. Remodeling Effects
+Remodeling is when the heart changes its structure. In heart failure, the heart can get bigger and thicker. ACE inhibitors help prevent this.
+They reduce hypertrophy and fibrosis. Studies show that ACE inhibitors help patients live longer.

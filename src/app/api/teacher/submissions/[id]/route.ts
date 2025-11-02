@@ -30,30 +30,3 @@ export async function GET(
     return NextResponse.json({ error: "Failed to fetch submission" }, { status: 500 });
   }
 }
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await getServerSession(authOptions);
-  
-  if (!session?.user || session.user.role !== "teacher") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const { id } = await params;
-    await connectDB();
-
-    const submission = await Submission.findByIdAndDelete(id);
-
-    if (!submission) {
-      return NextResponse.json({ error: "Submission not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Submission delete error:", error);
-    return NextResponse.json({ error: "Failed to delete submission" }, { status: 500 });
-  }
-}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use, useCallback } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -22,7 +22,11 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const fetchQuestion = useCallback(async () => {
+  useEffect(() => {
+    fetchQuestion();
+  }, []);
+
+  const fetchQuestion = async () => {
     try {
       const response = await fetch(`/api/teacher/questions/${id}`);
       const data = await response.json();
@@ -32,11 +36,7 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
     } finally {
       setLoading(false);
     }
-  }, [id]);
-
-  useEffect(() => {
-    fetchQuestion();
-  }, [fetchQuestion]);
+  };
 
   const submissionLink = `${window.location.origin}/submit/${id}`;
 
@@ -83,7 +83,7 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
           </div>
 
           {/* Submission Link Section */}
-          <div className="mb-8 p-6 bg-[#1a407c]/15 border-2 border-[#1a407c]/10 rounded-lg">
+          <div className="mb-8 p-6 bg-blue-50 border-2 border-blue-200 rounded-lg">
             <h2 className="text-xl font-bold text-[#1a407c] mb-3">
               📎 Submission Link
             </h2>

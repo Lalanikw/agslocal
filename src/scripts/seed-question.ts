@@ -27,98 +27,67 @@ async function seedQuestion() {
 
     const question = await Question.create({
       teacherId: teacher._id,
-      title: "Pharmacological basis of ACE Inhibitors in HFrEF",
-      description: "Answer the following question about ACE Inhibitors in Heart Failure with reduced Ejection Fraction (HFrEF)",
+      title: "Pharmacological Basis of ACE Inhibitors in Heart Failure with Reduced Ejection Fraction (HFrEF)",
+      description: "Explain the pharmacological basis for using ACE inhibitors in the treatment of Heart Failure with Reduced Ejection Fraction (HFrEF). Your answer should cover four main areas: 1. Mechanism of Action of ACE Inhibitors, 2. Effects on Heart and Aldosterone, 3. Direct Effects of Angiotensin II on Vessels and Heart, 4. Remodeling Effects",
       rubric: {
         totalMarks: 100,
-        sections: [
-          {
-            name: "Mechanism of Action of ACE Inhibitors",
-            totalMarks: 40,
-            criteria: [
-              {
-                description: "Inhibition of angiotensin-converting enzyme (ACE) - Clear explanation of how ACE inhibitors block the enzyme ACE and understanding of the location and function of ACE in the RAAS",
-                marks: 10,
-                guidance: "Look for clear explanation of enzyme blockage (5 marks) and RAAS understanding (5 marks)"
-              },
-              {
-                description: "Reduction in the conversion of angiotensin I to angiotensin II - Description of conversion process and significance of reducing angiotensin II levels",
-                marks: 10,
-                guidance: "Must describe conversion process (5 marks) and significance (5 marks)"
-              },
-              {
-                description: "Decrease in aldosterone secretion - Mechanism and implications on sodium and water retention",
-                marks: 10,
-                guidance: "Mechanism explanation (5 marks) and implications (5 marks)"
-              },
-              {
-                description: "Reduction in degradation of bradykinin and its implications - Role of ACE in bradykinin degradation and effects including vasodilation and side effects",
-                marks: 10,
-                guidance: "Role of ACE (5 marks) and effects of increased bradykinin (5 marks)"
-              }
-            ]
-          },
-          {
-            name: "Effects on Heart and Aldosterone",
-            totalMarks: 20,
-            criteria: [
-              {
-                description: "Decrease in blood volume due to reduced aldosterone levels",
-                marks: 5,
-                guidance: "Clear explanation of mechanism"
-              },
-              {
-                description: "Improvement in cardiac output and symptoms of heart failure",
-                marks: 10,
-                guidance: "Mechanism (5 marks) and clinical outcomes (5 marks)"
-              },
-              {
-                description: "Reduction in sodium and water retention",
-                marks: 5,
-                guidance: "Direct effects on renal handling"
-              }
-            ]
-          },
-          {
-            name: "Direct Effects of Angiotensin II on Vessels and Heart",
-            totalMarks: 20,
-            criteria: [
-              {
-                description: "Vasodilation due to reduced angiotensin II levels - Explanation and impact on afterload/cardiac workload",
-                marks: 10,
-                guidance: "Vasodilation explanation (5 marks) and impact (5 marks)"
-              },
-              {
-                description: "Decrease in vasoconstriction and peripheral resistance - Relationship and consequences",
-                marks: 10,
-                guidance: "Understanding relationship (5 marks) and consequences (5 marks)"
-              }
-            ]
-          },
-          {
-            name: "Remodeling Effects",
-            totalMarks: 20,
-            criteria: [
-              {
-                description: "Inhibition of myocardial and vascular remodeling - Definition and mechanism",
-                marks: 10,
-                guidance: "Definition (5 marks) and mechanism (5 marks)"
-              },
-              {
-                description: "Prevention of hypertrophy and fibrosis",
-                marks: 5,
-                guidance: "Explanation (2.5 marks) and role of ACE inhibitors (2.5 marks)"
-              },
-              {
-                description: "Long-term benefits on morbidity and mortality in HFrEF",
-                marks: 5,
-                guidance: "Clinical evidence presentation"
-              }
-            ]
-          }
-        ],
-        gradingInstructions: "Grade strictly according to the rubric. Award partial marks for incomplete but correct answers. Look for medical accuracy, clear explanations, and understanding of mechanisms. Students must demonstrate understanding of the RAAS system, hemodynamic effects, and clinical implications."
+        sections: [],
+        gradingInstructions: `MARKING SCHEME FOR ACE INHIBITORS IN HFrEF (Total: 100 marks)
+
+1. Mechanism of Action of ACE Inhibitors (40 marks)
+
+   a) Inhibition of angiotensin-converting enzyme (ACE) (10 marks)
+      - Clear explanation of how ACE inhibitors block the enzyme ACE (5 marks)
+      - Understanding of the location and function of ACE in the renin-angiotensin-aldosterone system (5 marks)
+
+   b) Reduction in the conversion of angiotensin I to angiotensin II (10 marks)
+      - Description of the conversion process from angiotensin I to angiotensin II (5 marks)
+      - Explanation of the significance of reducing angiotensin II levels (5 marks)
+
+   c) Decrease in aldosterone secretion (10 marks)
+      - Mechanism by which reduced angiotensin II levels lead to decreased aldosterone secretion (5 marks)
+      - Implications of decreased aldosterone on sodium and water retention (5 marks)
+
+   d) Reduction in degradation of bradykinin and its implications (10 marks)
+      - Role of ACE in bradykinin degradation (5 marks)
+      - Effects of increased bradykinin levels, including vasodilation and potential side effects (5 marks)
+
+2. Effects on Heart and Aldosterone (20 marks)
+
+   a) Decrease in blood volume due to reduced aldosterone levels (5 marks)
+      - Explanation of how reduced aldosterone levels decrease blood volume (5 marks)
+
+   b) Improvement in cardiac output and symptoms of heart failure (10 marks)
+      - Mechanism by which ACE inhibitors improve cardiac output (5 marks)
+      - Clinical outcomes observed in heart failure symptoms (5 marks)
+
+   c) Reduction in sodium and water retention (5 marks)
+      - Direct effects on renal sodium and water handling (5 marks)
+
+3. Direct Effects of Angiotensin II on Vessels and Heart (20 marks)
+
+   a) Vasodilation due to reduced angiotensin II levels (10 marks)
+      - Explanation of how reduced angiotensin II leads to vasodilation (5 marks)
+      - Impact on afterload and cardiac workload (5 marks)
+
+   b) Decrease in vasoconstriction and peripheral resistance (10 marks)
+      - Understanding the relationship between angiotensin II and vasoconstriction (5 marks)
+      - Consequences of reduced peripheral resistance on blood pressure and heart function (5 marks)
+
+4. Remodeling Effects (20 marks)
+
+   a) Inhibition of myocardial and vascular remodeling (10 marks)
+      - Definition and explanation of remodeling (5 marks)
+      - Mechanism by which ACE inhibitors inhibit this process (5 marks)
+
+   b) Prevention of hypertrophy and fibrosis (5 marks)
+      - Explanation of hypertrophy and fibrosis (2.5 marks)
+      - Role of ACE inhibitors in preventing these conditions (2.5 marks)
+
+   c) Long-term benefits on morbidity and mortality in HFrEF (5 marks)
+      - Presentation of clinical evidence or studies showing reduced morbidity and mortality (5 marks)`
       },
+      aiModel: "gpt-4o-mini", // Add this field
       settings: {
         deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
         allowLateSubmissions: true,
@@ -131,6 +100,7 @@ async function seedQuestion() {
     console.log("Question ID:", question._id);
     console.log("Title:", question.title);
     console.log("Total Marks:", question.rubric.totalMarks);
+    console.log("AI Model:", question.aiModel);
     console.log("\nShare this submission link with students:");
     console.log(`http://localhost:3000/submit/${question._id}`);
 

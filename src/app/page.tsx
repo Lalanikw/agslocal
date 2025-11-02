@@ -21,7 +21,7 @@ export default function Home() {
           {/* Teacher Card */}
           <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border-2 border-[#1a407c]">
             <div className="text-center">
-              <div className="w-20 h-20 bg-[#1a407c] rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-[#1a407c][#008080] rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg
                   className="w-10 h-10 text-white"
                   fill="none"

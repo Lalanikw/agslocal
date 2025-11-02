@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
     console.log("✅ Grade accepted successfully");
 
     return NextResponse.json(result);
-  } catch (err) {
-    console.error("❌ Accept grade error:", err);
+  } catch (error) {
+    console.error("❌ Accept grade error:", error);
     return NextResponse.json(
       { error: "Failed to accept grade" },
       { status: 500 }

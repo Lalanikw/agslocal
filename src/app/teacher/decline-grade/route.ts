@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(result);
-  } catch {
+  } catch (error) {
     return NextResponse.json(
       { error: "Failed to regrade" },
       { status: 500 }

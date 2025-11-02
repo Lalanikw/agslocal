@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface Question {
@@ -14,6 +15,7 @@ interface Question {
 }
 
 export default function AllQuestionsPage() {
+  const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -120,7 +122,7 @@ export default function AllQuestionsPage() {
       <div className="ml-4 flex gap-2">
         <Link
           href={`/teacher/questions/${question._id}`}
-          className="bg-[#1a407c]/70 text-white px-6 py-2 rounded-lg hover:bg-[#1a407c]/50"
+          className="bg-[#008080]/70 text-white px-6 py-2 rounded-lg hover:bg-[#008080]/50"
         >
           View Details
         </Link>

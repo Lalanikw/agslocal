@@ -17,7 +17,6 @@ const SubmissionSchema = new mongoose.Schema({
     enum: ["pending", "grading", "graded", "teacher_review", "accepted", "declined", "regrading"],
     default: "pending",
   },
-  error: { type: String },
   
   aiEvaluation: {
     score: { type: Number },

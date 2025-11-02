@@ -1,9 +1,19 @@
+import { ChatOpenAI } from "@langchain/openai";
 import { gradeSubmission } from "./grading-agent";
 import { sendNotification } from "./notify-agent";
 import Submission from "@/models/Submission";
 import { connectDB } from "@/lib/db/mongodb";
 
 export class OrchestratorAgent {
+  private model: ChatOpenAI;
+
+  constructor() {
+    this.model = new ChatOpenAI({
+      modelName: "gpt-4o-mini",
+      temperature: 0.2,
+    });
+  }
+
   // Step 1: Initial AI Grading (for teacher review)
   async processSubmission(submissionId: string) {
     try {
@@ -15,15 +25,9 @@ export class OrchestratorAgent {
         status: "grading",
       });
 
-      // Grade using AI with timeout
+      // Grade using AI
       console.log("[Orchestrator] Delegating to Grading Agent...");
-      
-      const gradingPromise = gradeSubmission(submissionId);
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Grading timeout after 120 seconds")), 120000)
-      );
-
-      const gradingResult = await Promise.race([gradingPromise, timeoutPromise]);
+      const gradingResult = await gradeSubmission(submissionId);
 
       // Save AI evaluation (NOT final grade yet)
       await Submission.findByIdAndUpdate(submissionId, {
@@ -45,8 +49,6 @@ export class OrchestratorAgent {
         report: gradingResult.feedback,
       });
 
-      console.log(`✅ Grading completed successfully for: ${submissionId}`);
-
       return {
         success: true,
         submissionId,
@@ -54,20 +56,8 @@ export class OrchestratorAgent {
         aiEvaluation: gradingResult,
       };
     } catch (error) {
-      console.error(`❌ [Orchestrator] Grading failed for ${submissionId}:`, error);
-      
-      // Mark submission as failed
-      await Submission.findByIdAndUpdate(submissionId, {
-        status: "grading_failed",
-        error: error instanceof Error ? error.message : "Grading failed",
-      });
-
-      return {
-        success: false,
-        submissionId,
-        status: "grading_failed",
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+      console.error("[Orchestrator] Error:", error);
+      throw error;
     }
   }
 
