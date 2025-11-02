@@ -20,10 +20,11 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(result);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to regrade" },
-      { status: 500 }
-    );
-  }
+  } catch (err) {
+  console.error("❌ Decline grade error:", err);
+  return NextResponse.json(
+    { error: "Failed to decline grade" },
+    { status: 500 }
+  );
+}
 }

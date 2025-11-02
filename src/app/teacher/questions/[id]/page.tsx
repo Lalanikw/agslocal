@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -22,11 +22,8 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    fetchQuestion();
-  }, []);
 
-  const fetchQuestion = async () => {
+  const fetchQuestion = useCallback(async () => {
     try {
       const response = await fetch(`/api/teacher/questions/${id}`);
       const data = await response.json();
@@ -36,7 +33,11 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchQuestion();
+  }, [fetchQuestion]);
 
   const submissionLink = `${window.location.origin}/submit/${id}`;
 
