@@ -1,13 +1,6 @@
 import { sendEmail } from "@/lib/db/helpers";
 import { getSubmissionById } from "@/lib/db/helpers";
 
-interface GradingResult {
-  success: boolean;
-  submissionId: string;
-  result: unknown;
-  report: string;
-}
-
 interface NotificationData {
   type: string;
   submissionId: string;
