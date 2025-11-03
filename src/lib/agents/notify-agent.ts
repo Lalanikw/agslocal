@@ -60,7 +60,7 @@ export async function sendNotification(data: NotificationData) {
           .header { background-color: #1a407c; color: white; padding: 20px; text-align: center; }
           .content { background-color: #f9f9f9; padding: 20px; }
           .info { margin: 10px 0; }
-          .button { display: inline-block; background-color: #1a407c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+          .button { display: inline-block; bg-[#1a407c]/80; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
         </style>
       </head>
       <body>
@@ -74,8 +74,7 @@ export async function sendNotification(data: NotificationData) {
             <div class="info"><strong>AI Score:</strong> ${submissionData.aiEvaluation?.score || 'N/A'}/100</div>
             <hr>
             <p>Please review this submission in your teacher dashboard:</p>
-            <a href="${process.env.NEXTAUTH_URL}/teacher/submissions/${submission._id}" class="button">Review Submission</a>
-          </div>
+            </div>
         </div>
       </body>
       </html>
@@ -89,106 +88,218 @@ export async function sendNotification(data: NotificationData) {
 
     console.log(`[Notify Agent] Review notification sent to teacher: ${teacher.email}`);
 
-  } else if (data.type === "grade_finalized") {
-    // Send to STUDENT with final grade
+   } else if (data.type === "grade_finalized") {
+    // Send to STUDENT with final grade and PROPERLY FORMATTED feedback
     const emailBody = `
       <!DOCTYPE html>
       <html>
       <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
           body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8; 
             color: #333; 
             margin: 0;
             padding: 0;
+            background-color: #f5f5f5;
           }
           .container { 
             max-width: 800px; 
-            margin: 0 auto; 
-            padding: 20px; 
+            margin: 20px auto; 
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
           }
           .header { 
-            background-color: #1a407c; 
+            background: linear-gradient(135deg, #1a407c 0%, #2563eb 100%);
             color: white; 
-            padding: 30px; 
-            text-align: center; 
-            border-radius: 8px 8px 0 0;
+            padding: 40px 30px; 
+            text-align: center;
           }
-          .header h2 { margin: 0; }
+          .header h2 { 
+            margin: 0; 
+            font-size: 28px;
+            font-weight: 600;
+          }
           .score-box {
-            background-color: #e8f4f8;
-            border-left: 4px solid #1a407c;
-            padding: 20px;
-            margin: 20px 0;
-            font-size: 18px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 25px;
+            margin: 30px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          }
+          .score-box .score {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
           }
           .content { 
-            background-color: white; 
-            padding: 30px; 
-            border: 1px solid #ddd;
-            border-radius: 0 0 8px 8px;
+            padding: 40px; 
           }
-          .feedback { 
-            background-color: #f9f9f9; 
-            padding: 20px; 
-            border-radius: 5px; 
-            margin: 20px 0;
-          }
-          .feedback h2, .feedback h3 {
+          .section-title {
             color: #1a407c;
-            margin-top: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #1a407c;
           }
-          .feedback ul {
-            margin-left: 20px;
+          .feedback-content { 
+            background-color: #f9fafb; 
+            padding: 30px; 
+            border-radius: 8px; 
+            margin: 20px 0;
+            border-left: 4px solid #1a407c;
+          }
+          
+          /* Major section headings (h2) */
+          .feedback-content > ul > li > strong {
+            display: block;
+            font-size: 18px;
+            color: #1a407c;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 2px solid #e5e7eb;
+          }
+          
+          /* First level headings */
+          .feedback-content h2, .feedback-content > ul > li {
+            margin-top: 40px !important;
+            margin-bottom: 25px !important;
+            padding-bottom: 15px;
+          }
+          
+          /* Subsection headings (h3) */
+          .feedback-content h3 {
+            color: #1a407c;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 30px !important;
+            margin-bottom: 15px !important;
+          }
+          
+          /* All lists */
+          .feedback-content ul {
+            margin: 20px 0;
+            padding-left: 25px;
+            list-style: none;
+          }
+          
+          /* Nested lists */
+          .feedback-content ul ul {
+            padding-left: 30px;
+            margin-top: 15px;
+          }
+          
+          /* All list items - MORE SPACING */
+          .feedback-content li {
+            margin: 20px 0 !important;
+            line-height: 2.0;
+            position: relative;
             padding-left: 0;
           }
-          .feedback li {
-            margin: 10px 0;
-            line-height: 1.8;
+          
+          /* Top-level list items - EXTRA spacing */
+          .feedback-content > ul > li {
+            margin: 35px 0 !important;
+            padding-bottom: 20px;
           }
-          .feedback strong {
+          
+          /* Bullet points */
+          .feedback-content ul > li::before {
+            content: "▸";
             color: #1a407c;
+            font-weight: bold;
+            position: absolute;
+            left: -20px;
           }
-          .feedback em {
+          
+          /* Strong text styling */
+          .feedback-content strong {
+            color: #1a407c;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+          }
+          
+          /* Highlighted excerpts from student */
+          .feedback-content em {
             background-color: #fef3c7;
-            padding: 2px 6px;
-            border-radius: 3px;
+            padding: 6px 10px;
+            border-radius: 4px;
             font-style: normal;
             color: #92400e;
+            display: block;
+            margin: 10px 0;
+            line-height: 1.6;
           }
+          
+          /* Paragraphs */
+          .feedback-content p {
+            margin: 20px 0;
+            line-height: 2.0;
+          }
+          
+          /* Section totals */
+          .feedback-content > ul > li:last-child {
+            background-color: #e0f2fe;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 40px !important;
+          }
+          
           hr { 
             border: none; 
-            border-top: 2px solid #ddd; 
-            margin: 30px 0; 
+            border-top: 2px solid #e5e7eb; 
+            margin: 40px 0; 
           }
+          
           .footer {
             text-align: center;
             color: #666;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
+            padding: 30px;
+            background-color: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+          }
+          .footer p {
+            margin: 10px 0;
+          }
+          .submission-id {
+            color: #999; 
+            font-size: 12px;
+            margin-top: 15px;
           }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <h2>Your Submission Has Been Graded</h2>
+            <h2>🎓 Your Submission Has Been Graded</h2>
           </div>
+          
+          <div class="score-box">
+            <div style="font-size: 16px; opacity: 0.9;">Final Score</div>
+            <div class="score">${submissionData.finalGrade?.score || 'N/A'}/100</div>
+          </div>
+          
           <div class="content">
-            <div class="score-box">
-              <strong>Final Score:</strong> ${submissionData.finalGrade?.score || 'N/A'}/100
-            </div>
+            <h2 class="section-title">📝 Detailed Feedback</h2>
             
-            <div class="feedback">
-              <h3>Detailed Feedback:</h3>
+            <div class="feedback-content">
               ${reportContent}
             </div>
             
+            <hr>
+            
             <div class="footer">
-              <p>View your full results in your student dashboard</p>
-              <p style="color: #999; font-size: 12px;">Submission ID: ${data.submissionId}</p>
+              <p style="font-size: 16px; color: #333;">
+                <strong>View your complete results in your student dashboard</strong>
+              </p>
+              <p class="submission-id">Submission ID: ${data.submissionId}</p>
             </div>
           </div>
         </div>
