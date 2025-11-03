@@ -102,160 +102,133 @@ export async function sendNotification(data: NotificationData) {
             line-height: 1.8; 
             color: #333; 
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: #f5f5f5;
           }
           .container { 
             max-width: 800px; 
-            margin: 20px auto; 
+            margin: 0 auto; 
             background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
           }
-          .header { 
-            background: linear-gradient(135deg, #1a407c 0%, #2563eb 100%);
-            color: white; 
-            padding: 40px 30px; 
+          
+          /* Small score banner */
+          .score-banner {
+            background-color: #1a407c;
+            color: white;
+            padding: 20px 30px;
             text-align: center;
-          }
-          .header h2 { 
-            margin: 0; 
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 600;
           }
-          .score-box {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 25px;
-            margin: 30px;
-            text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-          }
-          .score-box .score {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 10px 0;
-          }
+          
           .content { 
             padding: 40px; 
           }
+          
           .section-title {
             color: #1a407c;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 600;
-            margin: 30px 0 20px 0;
+            margin: 0 0 30px 0;
             padding-bottom: 10px;
-            border-bottom: 3px solid #1a407c;
+            border-bottom: 2px solid #1a407c;
           }
+          
+          /* Feedback content area */
           .feedback-content { 
-            background-color: #f9fafb; 
-            padding: 30px; 
-            border-radius: 8px; 
-            margin: 20px 0;
+            background-color: white; 
+            padding: 20px; 
+            line-height: 2.0;
+          }
+          
+          /* Remove default list styling */
+          .feedback-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+          
+          /* Top-level sections (like "1. Mechanism of Action") */
+          .feedback-content > ul > li {
+            margin-bottom: 50px !important;
+            padding: 25px;
+            background-color: #f9fafb;
+            border-radius: 8px;
             border-left: 4px solid #1a407c;
           }
           
-          /* Major section headings (h2) */
-          .feedback-content > ul > li > strong {
-            display: block;
-            font-size: 18px;
-            color: #1a407c;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            padding: 10px 0;
-            border-bottom: 2px solid #e5e7eb;
-          }
-          
-          /* First level headings */
-          .feedback-content h2, .feedback-content > ul > li {
-            margin-top: 40px !important;
-            margin-bottom: 25px !important;
-            padding-bottom: 15px;
-          }
-          
-          /* Subsection headings (h3) */
-          .feedback-content h3 {
+          /* Section headers */
+          .feedback-content strong {
             color: #1a407c;
             font-size: 16px;
             font-weight: 600;
-            margin-top: 30px !important;
-            margin-bottom: 15px !important;
+            display: block;
+            margin-bottom: 20px;
           }
           
-          /* All lists */
-          .feedback-content ul {
-            margin: 20px 0;
-            padding-left: 25px;
-            list-style: none;
-          }
-          
-          /* Nested lists */
+          /* Subsections */
           .feedback-content ul ul {
-            padding-left: 30px;
+            padding-left: 0;
+            margin-top: 20px;
+          }
+          
+          .feedback-content ul ul li {
+            margin-bottom: 25px !important;
+            padding: 15px;
+            background-color: white;
+            border-radius: 6px;
+            border-left: 3px solid #60a5fa;
+          }
+          
+          /* Sub-subsections */
+          .feedback-content ul ul ul {
+            padding-left: 20px;
             margin-top: 15px;
           }
           
-          /* All list items - MORE SPACING */
-          .feedback-content li {
-            margin: 20px 0 !important;
-            line-height: 2.0;
-            position: relative;
-            padding-left: 0;
+          .feedback-content ul ul ul li {
+            margin-bottom: 15px !important;
+            padding: 10px;
+            background-color: #fefefe;
+            border-left: 2px solid #93c5fd;
           }
           
-          /* Top-level list items - EXTRA spacing */
-          .feedback-content > ul > li {
-            margin: 35px 0 !important;
-            padding-bottom: 20px;
-          }
-          
-          /* Bullet points */
-          .feedback-content ul > li::before {
-            content: "▸";
-            color: #1a407c;
-            font-weight: bold;
-            position: absolute;
-            left: -20px;
-          }
-          
-          /* Strong text styling */
-          .feedback-content strong {
-            color: #1a407c;
-            font-weight: 600;
-            display: inline-block;
-            margin-top: 10px;
-          }
-          
-          /* Highlighted excerpts from student */
+          /* Student excerpts (em tags) */
           .feedback-content em {
             background-color: #fef3c7;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 4px;
             font-style: normal;
             color: #92400e;
             display: block;
-            margin: 10px 0;
-            line-height: 1.6;
+            margin: 12px 0;
+            line-height: 1.8;
+            border-left: 3px solid #f59e0b;
           }
           
           /* Paragraphs */
           .feedback-content p {
-            margin: 20px 0;
+            margin: 15px 0;
             line-height: 2.0;
           }
           
-          /* Section totals */
-          .feedback-content > ul > li:last-child {
+          /* "Section Total" styling */
+          .feedback-content p strong:contains("Section Total"),
+          .feedback-content p strong:contains("Total Score") {
             background-color: #e0f2fe;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 40px !important;
+            padding: 15px;
+            border-radius: 6px;
+            display: block;
+            margin-top: 25px;
+            color: #0369a1;
           }
           
-          hr { 
-            border: none; 
-            border-top: 2px solid #e5e7eb; 
-            margin: 40px 0; 
+          /* Add space before "Marks:" */
+          .feedback-content p:has(strong) {
+            margin-top: 10px;
           }
           
           .footer {
@@ -265,9 +238,7 @@ export async function sendNotification(data: NotificationData) {
             background-color: #f9fafb;
             border-top: 1px solid #e5e7eb;
           }
-          .footer p {
-            margin: 10px 0;
-          }
+          
           .submission-id {
             color: #999; 
             font-size: 12px;
@@ -277,27 +248,21 @@ export async function sendNotification(data: NotificationData) {
       </head>
       <body>
         <div class="container">
-          <div class="header">
-            <h2>🎓 Your Submission Has Been Graded</h2>
-          </div>
-          
-          <div class="score-box">
-            <div style="font-size: 16px; opacity: 0.9;">Final Score</div>
-            <div class="score">${submissionData.finalGrade?.score || 'N/A'}/100</div>
+          <!-- Small score banner -->
+          <div class="score-banner">
+            Final Score: ${submissionData.finalGrade?.score || 'N/A'}/100
           </div>
           
           <div class="content">
-            <h2 class="section-title">📝 Detailed Feedback</h2>
+            <h2 class="section-title">Detailed Feedback</h2>
             
             <div class="feedback-content">
               ${reportContent}
             </div>
             
-            <hr>
-            
             <div class="footer">
-              <p style="font-size: 16px; color: #333;">
-                <strong>View your complete results in your student dashboard</strong>
+              <p style="font-size: 14px; color: #333; margin: 0;">
+                View your complete results in your student dashboard
               </p>
               <p class="submission-id">Submission ID: ${data.submissionId}</p>
             </div>
