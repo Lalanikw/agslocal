@@ -25,7 +25,6 @@ export async function gradeSubmission(
   submissionId: string,
   context?: GradingContext
 ): Promise<GradingResult> {
-  // Fetch submission and question details
   const submission = await getSubmissionById(submissionId);
   if (!submission) {
     throw new Error("Submission not found");
@@ -39,7 +38,7 @@ export async function gradeSubmission(
   const modelToUse = question?.aiModel || "gpt-4o-mini";
   console.log(`[Grading Agent] Using model: ${modelToUse} for submission ${submissionId}`);
 
-  // Build the professor's detailed prompt
+  // Build the professor's detailed prompt with STRICT HTML formatting
   let systemPrompt = `You are an examiner of a medical/pharmacology exam. You are grading student submissions against a detailed marking scheme.
 
 MARKING SCHEME:
@@ -60,34 +59,55 @@ GRADING INSTRUCTIONS:
 
 2. Calculate marks for each section and the total score
 
-3. Format your response as structured HTML with:
-   - Bullet points for each marking scheme point
-   - Clear section headings
-   - Highlighted excerpts from student answers
-   - Justification for marks awarded (explain why full vs partial)
-   - Section totals and final score
+3. MANDATORY HTML FORMAT - You MUST use this EXACT structure:
 
-4. Be rigorous and accurate in assessment
-5. Do NOT include preambles like "Here is the analysis" - start directly with the evaluation
-6. Do NOT format as tables - use bullet points
-7. Do NOT include triple backticks or html identifiers
+<ul>
+  <li><strong>1. Section Name (XX marks)</strong>
+    <ul>
+      <li><strong>a) Subsection name (XX marks)</strong>
+        <ul>
+          <li><strong>Point description (X marks)</strong>
+            <ul>
+              <li><em>Excerpt: "exact words from student answer"</em></li>
+              <li>Evaluation: Your evaluation here. <strong>Marks awarded: X/X</strong></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Section Total: XX/XX</strong></p>
+<p><strong>Total Score: XX/100</strong></p>
+
+4. CRITICAL FORMATTING RULES:
+   - Start your response with <ul>
+   - Use <ul> and <li> for ALL lists (4 levels of nesting)
+   - Use <strong> for section names, marks, and totals
+   - Use <em> ONLY for student excerpts (always prefix with "Excerpt: ")
+   - Use <p> for evaluation text
+   - Always show "Marks awarded: X/X" in <strong> tags
+   - End with section totals and final score in <p><strong> tags
+   - NO plain text outside HTML tags
+   - NO markdown formatting
+   - NO triple backticks
+   - NO preambles
 
 STUDENT ANSWER:
 ${submission.content}
 
-Begin the grading report now:`;
+Begin the grading report now with <ul>:`;
 
-  // Add re-grading context if provided
   if (context?.teacherFeedback) {
     systemPrompt += `
 
 IMPORTANT - TEACHER FEEDBACK ON PREVIOUS GRADING:
-The teacher reviewed the previous grading and provided this feedback:
 "${context.teacherFeedback}"
 
 Previous attempt score: ${context.previousAttempt?.score}/100
 
-Please re-grade taking the teacher's specific feedback into account. Adjust your assessment based on their guidance.`;
+Re-grade taking the teacher's feedback into account. Still use the EXACT HTML format above.`;
   }
 
   console.log("[Grading Agent] Sending to AI for evaluation...");
@@ -105,67 +125,73 @@ Please re-grade taking the teacher's specific feedback into account. Adjust your
   console.timeEnd("AI Grading");
   console.log("[Grading Agent] Received response, parsing...");
   
-  // Parse the HTML response to extract score
-  const gradingResult = parseHtmlGradingResponse(htmlContent);
+  // Ensure consistent HTML format
+  const formattedContent = ensureHtmlFormat(htmlContent);
+  const gradingResult = parseHtmlGradingResponse(formattedContent);
 
   console.log(`[Grading Agent] Final score: ${gradingResult.score}/100`);
 
   return gradingResult;
 }
 
+// Ensure the content is in proper HTML format
+function ensureHtmlFormat(content: string): string {
+  // Remove any markdown code blocks
+  content = content.replace(/```html\n?/g, '').replace(/```\n?/g, '');
+  
+  // If doesn't start with HTML tag, it's plain text - convert it
+  if (!content.trim().startsWith('<')) {
+    console.warn('[Grading Agent] Response is plain text, converting to HTML');
+    return `<div style="white-space: pre-wrap;">${content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</div>`;
+  }
+  
+  // Ensure it has proper ul/li structure
+  if (!content.includes('<ul>') || !content.includes('<li>')) {
+    console.warn('[Grading Agent] Response lacks list structure, wrapping');
+    return `<div>${content}</div>`;
+  }
+  
+  return content;
+}
+
 function parseHtmlGradingResponse(htmlContent: string): GradingResult {
-  // Extract total score from various possible patterns
   let score = 0;
   
-  // Try multiple patterns to find the score
   const scorePatterns = [
+    /total\s*score[:\s]*<\/strong>\s*(\d+)\s*\/\s*100/i,
     /total\s*score[:\s]+(\d+)\s*\/\s*100/i,
     /final\s*score[:\s]+(\d+)\s*\/\s*100/i,
     /overall\s*score[:\s]+(\d+)\s*\/\s*100/i,
-    /total[:\s]+(\d+)\s*\/\s*100/i,
     /score[:\s]+(\d+)\s*\/\s*100/i,
-    /total[:\s]+(\d+)\s*marks/i,
-    /(\d+)\s*\/\s*100\s*marks/i,
+    /(\d+)\s*\/\s*100/i,
   ];
 
   for (const pattern of scorePatterns) {
     const match = htmlContent.match(pattern);
     if (match) {
       score = parseInt(match[1], 10);
-      console.log(`[Parser] Found score using pattern: ${pattern}`);
+      console.log(`[Parser] Found score: ${score}/100`);
       break;
     }
   }
 
-  // If no score found, try to extract any number followed by /100
-  if (score === 0) {
-    const fallbackMatch = htmlContent.match(/(\d+)\s*\/\s*100/);
-    if (fallbackMatch) {
-      score = parseInt(fallbackMatch[1], 10);
-      console.log(`[Parser] Found score using fallback pattern`);
-    }
-  }
-
-  // Validate score
   if (score < 0 || score > 100) {
-    console.warn(`[Parser] Invalid score detected: ${score}. Setting to 0.`);
+    console.warn(`[Parser] Invalid score: ${score}. Setting to 0.`);
     score = 0;
   }
 
   // Extract section breakdowns
   const sections: Record<string, { score: number; comments: string }> = {};
-  
   const sectionMatches = htmlContent.matchAll(
-    /<h[23]>(.*?)<\/h[23]>[\s\S]*?(\d+)\s*\/\s*(\d+)/gi
+    /section\s+total[:\s]*<\/strong>\s*(\d+)\s*\/\s*(\d+)/gi
   );
   
   let sectionCount = 0;
   for (const match of sectionMatches) {
-    const sectionName = match[1].replace(/<[^>]*>/g, '').trim();
-    const sectionScore = parseInt(match[2], 10);
-    const maxScore = parseInt(match[3], 10);
+    const sectionScore = parseInt(match[1], 10);
+    const maxScore = parseInt(match[2], 10);
     
-    sections[sectionName] = {
+    sections[`Section ${sectionCount + 1}`] = {
       score: sectionScore,
       comments: `${sectionScore}/${maxScore} marks`
     };

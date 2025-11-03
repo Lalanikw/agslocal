@@ -89,183 +89,38 @@ export async function sendNotification(data: NotificationData) {
     console.log(`[Notify Agent] Review notification sent to teacher: ${teacher.email}`);
 
    } else if (data.type === "grade_finalized") {
-    // Send to STUDENT with final grade and PROPERLY FORMATTED feedback
+    // Send to STUDENT with final grade - SIMPLE FORMAT
     const emailBody = `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-          body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.8; 
-            color: #333; 
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-          }
-          .container { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-          }
-          
-          /* Small score banner */
-          .score-banner {
-            background-color: #1a407c;
-            color: white;
-            padding: 20px 30px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: 600;
-          }
-          
-          .content { 
-            padding: 40px; 
-          }
-          
-          .section-title {
-            color: #1a407c;
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 30px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #1a407c;
-          }
-          
-          /* Feedback content area */
-          .feedback-content { 
-            background-color: white; 
-            padding: 20px; 
-            line-height: 2.0;
-          }
-          
-          /* Remove default list styling */
-          .feedback-content ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-          }
-          
-          /* Top-level sections (like "1. Mechanism of Action") */
-          .feedback-content > ul > li {
-            margin-bottom: 50px !important;
-            padding: 25px;
-            background-color: #f9fafb;
-            border-radius: 8px;
-            border-left: 4px solid #1a407c;
-          }
-          
-          /* Section headers */
-          .feedback-content strong {
-            color: #1a407c;
-            font-size: 16px;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 20px;
-          }
-          
-          /* Subsections */
-          .feedback-content ul ul {
-            padding-left: 0;
-            margin-top: 20px;
-          }
-          
-          .feedback-content ul ul li {
-            margin-bottom: 25px !important;
-            padding: 15px;
-            background-color: white;
-            border-radius: 6px;
-            border-left: 3px solid #60a5fa;
-          }
-          
-          /* Sub-subsections */
-          .feedback-content ul ul ul {
-            padding-left: 20px;
-            margin-top: 15px;
-          }
-          
-          .feedback-content ul ul ul li {
-            margin-bottom: 15px !important;
-            padding: 10px;
-            background-color: #fefefe;
-            border-left: 2px solid #93c5fd;
-          }
-          
-          /* Student excerpts (em tags) */
-          .feedback-content em {
-            background-color: #fef3c7;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-style: normal;
-            color: #92400e;
-            display: block;
-            margin: 12px 0;
-            line-height: 1.8;
-            border-left: 3px solid #f59e0b;
-          }
-          
-          /* Paragraphs */
-          .feedback-content p {
-            margin: 15px 0;
-            line-height: 2.0;
-          }
-          
-          /* "Section Total" styling */
-          .feedback-content p strong:contains("Section Total"),
-          .feedback-content p strong:contains("Total Score") {
-            background-color: #e0f2fe;
-            padding: 15px;
-            border-radius: 6px;
-            display: block;
-            margin-top: 25px;
-            color: #0369a1;
-          }
-          
-          /* Add space before "Marks:" */
-          .feedback-content p:has(strong) {
-            margin-top: 10px;
-          }
-          
-          .footer {
-            text-align: center;
-            color: #666;
-            padding: 30px;
-            background-color: #f9fafb;
-            border-top: 1px solid #e5e7eb;
-          }
-          
-          .submission-id {
-            color: #999; 
-            font-size: 12px;
-            margin-top: 15px;
-          }
-        </style>
       </head>
-      <body>
-        <div class="container">
+      <body style="font-family: Arial, sans-serif; line-height: 1.8; color: #333; margin: 0; padding: 20px; background-color: #f5f5f5;">
+        <div style="max-width: 800px; margin: 0 auto; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          
           <!-- Small score banner -->
-          <div class="score-banner">
+          <div style="background-color: #1a407c; color: white; padding: 20px; text-align: center; font-size: 20px; font-weight: 600;">
             Final Score: ${submissionData.finalGrade?.score || 'N/A'}/100
           </div>
           
-          <div class="content">
-            <h2 class="section-title">Detailed Feedback</h2>
+          <!-- Content -->
+          <div style="padding: 40px;">
             
-            <div class="feedback-content">
-              ${reportContent}
+            <h3 style="color: #1a407c; font-size: 18px; margin-bottom: 30px; padding-bottom: 10px; border-bottom: 2px solid #1a407c;">
+              Detailed Feedback
+            </h3>
+            
+            <div style="line-height: 2.2; color: #333;">
+              ${formatFeedback(reportContent)}
             </div>
             
-            <div class="footer">
-              <p style="font-size: 14px; color: #333; margin: 0;">
-                View your complete results in your student dashboard
-              </p>
-              <p class="submission-id">Submission ID: ${data.submissionId}</p>
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #e5e7eb; text-align: center; color: #666;">
+              <p style="margin: 10px 0; font-size: 14px;">View your complete results in your student dashboard</p>
+              <p style="color: #999; font-size: 12px; margin-top: 15px;">Submission ID: ${data.submissionId}</p>
             </div>
+            
           </div>
         </div>
       </body>
@@ -280,4 +135,30 @@ export async function sendNotification(data: NotificationData) {
 
     console.log(`[Notify Agent] Final grade notification sent to student: ${submissionData.studentEmail}`);
   }
+}
+
+// Helper function to format feedback with proper line breaks
+function formatFeedback(content: string): string {
+  // Convert the HTML feedback to have better spacing
+  return content
+    // Add extra line breaks before major sections (numbered sections)
+    .replace(/<li><strong>(\d+\.|[★•])/g, '<div style="margin-top: 40px;"></div><li><strong>$1')
+    // Style main section headers
+    .replace(/<li><strong>(\**\d+\..*?)<\/strong>/g, '<li style="margin-bottom: 25px;"><strong style="color: #1a407c; font-size: 16px; display: block; margin-bottom: 20px; padding: 15px; background-color: #f0f4ff; border-left: 4px solid #1a407c; border-radius: 4px;">$1</strong>')
+    // Style subsection headers
+    .replace(/<strong>(.*?a\)|.*?b\)|.*?c\)|.*?d\).*?)<\/strong>/g, '<strong style="color: #2563eb; display: block; margin-top: 20px; margin-bottom: 10px; font-size: 15px;">$1</strong>')
+    // Style excerpts (em tags)
+    .replace(/<em>(.*?)<\/em>/g, '<div style="background-color: #fef3c7; padding: 12px 15px; margin: 15px 0; border-radius: 4px; border-left: 4px solid #f59e0b; color: #92400e; line-height: 1.8;">$1</div>')
+    // Style "Marks:" lines
+    .replace(/<strong>Marks:\*\*<\/strong>/g, '<strong style="color: #059669; margin-top: 10px; display: inline-block;">Marks:</strong>')
+    // Style section totals
+    .replace(/<strong>(Section Total|Total Score):\*\*<\/strong>/g, '<div style="margin-top: 30px;"></div><strong style="color: #0369a1; background-color: #e0f2fe; padding: 12px 15px; display: block; border-radius: 6px; margin-top: 20px; font-size: 15px;">$1:</strong>')
+    // Add spacing after list items
+    .replace(/<\/li>/g, '</li><div style="margin-bottom: 20px;"></div>')
+    // Clean up lists
+    .replace(/<ul>/g, '<ul style="list-style: none; padding-left: 0; margin: 0;">')
+    .replace(/<ul style="list-style: none; padding-left: 0; margin: 0;"><ul/g, '<ul style="list-style: none; padding-left: 20px; margin-top: 15px;"><ul')
+    // Remove nested ul duplication
+    .replace(/<ul><ul/g, '<ul')
+    .replace(/<\/ul><\/ul>/g, '</ul>');
 }
