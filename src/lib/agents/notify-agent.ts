@@ -9,6 +9,21 @@ interface NotificationData {
   report: string | unknown;
 }
 
+interface SubmissionWithDetails {
+  _id: string;
+  questionId: string;
+  studentName: string;
+  studentEmail: string;
+  aiEvaluation?: {
+    score: number;
+    feedback: string;
+  };
+  finalGrade?: {
+    score: number;
+    feedback: string;
+  };
+}
+
 export async function sendNotification(data: NotificationData) {
   const submission = await getSubmissionById(data.submissionId);
 
@@ -19,6 +34,9 @@ export async function sendNotification(data: NotificationData) {
   const reportContent = typeof data.report === 'string' 
     ? data.report 
     : JSON.stringify(data.report, null, 2);
+
+  // Cast submission with proper interface
+  const submissionData = submission as unknown as SubmissionWithDetails;
 
   if (data.type === "teacher_review_needed") {
     // Send to TEACHER for review
@@ -34,9 +52,9 @@ export async function sendNotification(data: NotificationData) {
 
     const emailBody = `
       <h2>New Submission Ready for Review</h2>
-      <p><strong>Student:</strong> ${submission.studentName} (${submission.studentEmail})</p>
+      <p><strong>Student:</strong> ${submissionData.studentName} (${submissionData.studentEmail})</p>
       <p><strong>Question:</strong> ${question.title}</p>
-      <p><strong>AI Score:</strong> ${submission.aiEvaluation?.score || 'N/A'}/100</p>
+      <p><strong>AI Score:</strong> ${submissionData.aiEvaluation?.score || 'N/A'}/100</p>
       <hr>
       <p>Please review this submission in your teacher dashboard:</p>
       <p><a href="${process.env.NEXTAUTH_URL}/teacher/submissions/${submission._id}">Review Submission</a></p>
@@ -55,7 +73,7 @@ export async function sendNotification(data: NotificationData) {
     const emailBody = `
       <h2>Your Submission Has Been Graded</h2>
       <p>Submission ID: ${data.submissionId}</p>
-      <p><strong>Final Score:</strong> ${submission.finalGrade?.score || 'N/A'}/100</p>
+      <p><strong>Final Score:</strong> ${submissionData.finalGrade?.score || 'N/A'}/100</p>
       <hr>
       <div>${reportContent}</div>
       <hr>
@@ -63,11 +81,11 @@ export async function sendNotification(data: NotificationData) {
     `;
 
     await sendEmail(
-      submission.studentEmail,
+      submissionData.studentEmail,
       "Your Submission Has Been Graded - AGS",
       emailBody
     );
 
-    console.log(`[Notify Agent] Final grade notification sent to student: ${submission.studentEmail}`);
+    console.log(`[Notify Agent] Final grade notification sent to student: ${submissionData.studentEmail}`);
   }
 }
