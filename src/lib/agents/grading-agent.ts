@@ -50,7 +50,7 @@ GRADING INSTRUCTIONS:
    - If NOT mentioned, explicitly state "NOT MENTIONED"
    - Evaluate the correctness AND completeness of the answer
    - Assign marks based on depth of understanding:
-     * Full marks (100%): Clear explanation with mechanism/details/examples
+     * Full marks (100%): Clear explanation with mechanism/details
      * Good marks (70-80%): Correct but missing some details
      * Partial marks (40-60%): Mentioned but superficial or lacks key elements
      * Minimal marks (10-30%): Vague mention without proper explanation
@@ -59,7 +59,9 @@ GRADING INSTRUCTIONS:
 
 2. Calculate marks for each section and the total score
 
-3. MANDATORY HTML FORMAT - You MUST use this EXACT structure:
+3. After calculating the total score, re check and make sure the total is correct. If not, correct it.
+
+4. MANDATORY HTML FORMAT - You MUST use this EXACT structure:
 
 <ul>
   <li><strong>1. Section Name (XX marks)</strong>
