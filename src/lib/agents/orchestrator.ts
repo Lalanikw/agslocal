@@ -2,7 +2,8 @@ import { ChatOpenAI } from "@langchain/openai";
 import { gradeSubmission } from "./grading-agent";
 import { sendNotification } from "./notify-agent";
 import Submission from "@/models/Submission";
-import { connectDB } from "@/lib/db/mongodb";
+import { connectDB } from "@/lib/db/mongodb";;
+import User from "@/models/User";
 
 export class OrchestratorAgent {
   private model: ChatOpenAI;
@@ -62,45 +63,36 @@ export class OrchestratorAgent {
   }
 
   // Step 2: Teacher accepts the grade
-  async acceptGrade(submissionId: string, teacherId: string, teacherNotes?: string) {
-    try {
-      await connectDB();
-      const submission = await Submission.findById(submissionId);
+  async acceptGrade(submissionId: string, teacherId: string, notes?: string) {
+  // Use Submission model directly for proper types
+  const submissionDoc = await Submission.findById(submissionId);
+  if (!submissionDoc) throw new Error("Submission not found");
 
-      if (!submission || !submission.aiEvaluation) {
-        throw new Error("No AI evaluation found");
-      }
+  // Get teacher info for the email
+  const teacher = await User.findById(teacherId);
 
-      // Move AI evaluation to final grade
-      await Submission.findByIdAndUpdate(submissionId, {
-        status: "accepted",
-        finalGrade: {
-          score: submission.aiEvaluation.score,
-          feedback: submission.aiEvaluation.feedback,
-          gradedAt: new Date(),
-        },
-        teacherReview: {
-          reviewedBy: teacherId,
-          reviewedAt: new Date(),
-          decision: "accepted",
-          teacherNotes,
-        },
-      });
+  submissionDoc.finalGrade = {
+    score: submissionDoc.aiEvaluation?.score || 0,
+    feedback: submissionDoc.aiEvaluation?.feedback || "",
+    gradedAt: new Date(),
+    teacherNotes: notes,
+  };
+  submissionDoc.status = "accepted";
+  await submissionDoc.save();
 
-      // Now save to permanent storage and notify student
-      console.log("[Orchestrator] Notifying student of final grade...");
-      await sendNotification({
-        type: "grade_finalized",
-        submissionId,
-        report: submission.aiEvaluation.feedback,
-      });
+  console.log(`[Orchestrator] Grade accepted by teacher for submission: ${submissionId}`);
 
-      return { success: true, status: "accepted" };
-    } catch (error) {
-      console.error("[Orchestrator] Error accepting grade:", error);
-      throw error;
-    }
-  }
+  // Send notification to student with teacher feedback
+  await sendNotification({
+    type: "grade_finalized",
+    submissionId,
+    report: submissionDoc.aiEvaluation?.feedback || "",
+    teacherNotes: notes,
+    teacherName: teacher?.name,
+  });
+
+  return { success: true, submission: submissionDoc };
+}
 
   // Step 3: Teacher declines - trigger re-grading
   async declineAndRegrade(

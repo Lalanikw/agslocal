@@ -59,7 +59,7 @@ GRADING INSTRUCTIONS:
 
 2. Calculate marks for each section and the total score
 
-3. After calculating the total score, re check and make sure the total is correct. If not, correct it.
+3. After calculating the section score and the total score, double check the scores. If the score is not correct, correct it.
 
 4. MANDATORY HTML FORMAT - You MUST use this EXACT structure:
 
@@ -79,9 +79,6 @@ GRADING INSTRUCTIONS:
     </ul>
   </li>
 </ul>
-
-<p><strong>Section Total: XX/XX</strong></p>
-<p><strong>Total Score: XX/100</strong></p>
 
 4. CRITICAL FORMATTING RULES:
    - Start your response with <ul>
@@ -127,83 +124,96 @@ Re-grade taking the teacher's feedback into account. Still use the EXACT HTML fo
   console.timeEnd("AI Grading");
   console.log("[Grading Agent] Received response, parsing...");
   
-  // Ensure consistent HTML format
-  const formattedContent = ensureHtmlFormat(htmlContent);
-  const gradingResult = parseHtmlGradingResponse(formattedContent);
+  const gradingResult = parseHtmlGradingResponse(htmlContent);
 
   console.log(`[Grading Agent] Final score: ${gradingResult.score}/100`);
 
   return gradingResult;
 }
 
-// Ensure the content is in proper HTML format
-function ensureHtmlFormat(content: string): string {
-  // Remove any markdown code blocks
-  content = content.replace(/```html\n?/g, '').replace(/```\n?/g, '');
-  
-  // If doesn't start with HTML tag, it's plain text - convert it
-  if (!content.trim().startsWith('<')) {
-    console.warn('[Grading Agent] Response is plain text, converting to HTML');
-    return `<div style="white-space: pre-wrap;">${content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</div>`;
-  }
-  
-  // Ensure it has proper ul/li structure
-  if (!content.includes('<ul>') || !content.includes('<li>')) {
-    console.warn('[Grading Agent] Response lacks list structure, wrapping');
-    return `<div>${content}</div>`;
-  }
-  
-  return content;
-}
-
 function parseHtmlGradingResponse(htmlContent: string): GradingResult {
-  let score = 0;
+  // Extract all section totals with multiple patterns
+  const sectionTotals: number[] = [];
   
+  // Try different patterns to catch section totals
+  const patterns = [
+    /section\s+total[:\s]*<\/strong>\s*(\d+)\s*\/\s*\d+/gi,
+    /section\s+total[:\s]+(\d+)\s*\/\s*\d+/gi,
+    /<strong>section\s+total[:\s]*(\d+)\s*\/\s*\d+<\/strong>/gi,
+  ];
+
+  for (const pattern of patterns) {
+    const matches = htmlContent.matchAll(pattern);
+    for (const match of matches) {
+      const score = parseInt(match[1], 10);
+      if (!isNaN(score) && !sectionTotals.includes(score)) {
+        sectionTotals.push(score);
+      }
+    }
+  }
+
+  console.log(`[Parser] Section scores found:`, sectionTotals);
+
+  // Calculate the CORRECT total
+  const calculatedTotal = sectionTotals.reduce((sum, score) => sum + score, 0);
+  console.log(`[Parser] Calculated total from ${sectionTotals.length} sections: ${calculatedTotal}`);
+
+  // Extract AI's claimed score
+  let aiClaimedScore = 0;
   const scorePatterns = [
-    /total\s*score[:\s]*<\/strong>\s*(\d+)\s*\/\s*100/i,
-    /total\s*score[:\s]+(\d+)\s*\/\s*100/i,
-    /final\s*score[:\s]+(\d+)\s*\/\s*100/i,
-    /overall\s*score[:\s]+(\d+)\s*\/\s*100/i,
-    /score[:\s]+(\d+)\s*\/\s*100/i,
+    /total\s+score[:\s]*<\/strong>\s*(\d+)\s*\/\s*100/i,
+    /total\s+score[:\s]+(\d+)\s*\/\s*100/i,
+    /final\s+score[:\s]+(\d+)\s*\/\s*100/i,
     /(\d+)\s*\/\s*100/i,
   ];
 
   for (const pattern of scorePatterns) {
     const match = htmlContent.match(pattern);
     if (match) {
-      score = parseInt(match[1], 10);
-      console.log(`[Parser] Found score: ${score}/100`);
+      aiClaimedScore = parseInt(match[1], 10);
+      console.log(`[Parser] AI claimed score: ${aiClaimedScore}`);
       break;
     }
   }
 
-  if (score < 0 || score > 100) {
-    console.warn(`[Parser] Invalid score: ${score}. Setting to 0.`);
-    score = 0;
-  }
+  // Use calculated total if we found sections
+  let finalScore = sectionTotals.length >= 3 ? calculatedTotal : aiClaimedScore;
 
-  // Extract section breakdowns
-  const sections: Record<string, { score: number; comments: string }> = {};
-  const sectionMatches = htmlContent.matchAll(
-    /section\s+total[:\s]*<\/strong>\s*(\d+)\s*\/\s*(\d+)/gi
-  );
-  
-  let sectionCount = 0;
-  for (const match of sectionMatches) {
-    const sectionScore = parseInt(match[1], 10);
-    const maxScore = parseInt(match[2], 10);
+  // Fix AI arithmetic errors
+  if (sectionTotals.length >= 3 && Math.abs(aiClaimedScore - calculatedTotal) > 0) {
+    console.warn(`[Parser] ⚠️ AI arithmetic error! AI: ${aiClaimedScore}/100, Correct: ${calculatedTotal}/100`);
+    console.log(`[Parser] ✅ Using correct total: ${calculatedTotal}/100`);
     
-    sections[`Section ${sectionCount + 1}`] = {
-      score: sectionScore,
-      comments: `${sectionScore}/${maxScore} marks`
-    };
-    sectionCount++;
+    // Replace incorrect total
+    htmlContent = htmlContent.replace(
+      /(<strong>Total\s+Score:[:\s]*<\/strong>\s*)\d+(\s*\/\s*100)/gi,
+      `$1${calculatedTotal}$2`
+    );
+    htmlContent = htmlContent.replace(
+      /(Total\s+Score:[:\s]+)\d+(\s*\/\s*100)/gi,
+      `$1${calculatedTotal}$2`
+    );
   }
 
-  console.log(`[Parser] Extracted ${sectionCount} section breakdowns`);
+  // Validate
+  if (finalScore < 0 || finalScore > 100) {
+    console.warn(`[Parser] Invalid score: ${finalScore}. Capping.`);
+    finalScore = Math.max(0, Math.min(100, finalScore));
+  }
+
+  // Build section breakdown
+  const sections: Record<string, { score: number; comments: string }> = {};
+  sectionTotals.forEach((score, index) => {
+    sections[`Section ${index + 1}`] = {
+      score,
+      comments: `Section ${index + 1} marks`
+    };
+  });
+
+  console.log(`[Parser] ✅ Final validated score: ${finalScore}/100`);
 
   return {
-    score: score || 0,
+    score: finalScore,
     feedback: htmlContent,
     breakdown: sections,
   };

@@ -42,6 +42,27 @@ export default function ReviewSubmissionPage({ params }: { params: Promise<{ id:
     fetchSubmission();
   }, [fetchSubmission]);
 
+ // Helper function to remove only section totals and total score (keep individual marks)
+const removeScoreTotalsFromFeedback = (htmlContent: string): string => {
+  return htmlContent
+    // Remove "Section Totals: X/X, Y/Y, Z/Z" (comma-separated format)
+    .replace(/Section\s+Totals?:\s*[\d\/,\s]+/gi, '')
+    
+    // Remove "Section X Total: XX/XX"
+    .replace(/<p>\s*<strong>\s*Section\s+\d*\s*Total:\s*\d+\/\d+\s*<\/strong>\s*<\/p>/gi, '')
+    .replace(/<strong>\s*Section\s+\d*\s*Total:\s*\d+\/\d+\s*<\/strong>/gi, '')
+    .replace(/<div[^>]*>\s*📊\s*Section\s+Total:\s*\d+\/\d+\s*<\/div>/gi, '')
+    .replace(/<div[^>]*>\s*Section\s+\d*\s*Total:\s*\d+\/\d+\s*<\/div>/gi, '')
+    .replace(/Section\s+\d*\s*Total:\s*\d+\/\d+/gi, '')
+    .replace(/Section\s+Total:\s*\d+\/\d+/gi, '')
+    
+    // Remove "Total Score: XX/100" AND "Final Score: XX/100"
+    .replace(/<p>\s*<strong>\s*(Total|Final)\s+Score:\s*\d+\/100\s*<\/strong>\s*<\/p>/gi, '')
+    .replace(/<strong>\s*(Total|Final)\s+Score:\s*\d+\/100\s*<\/strong>/gi, '')
+    .replace(/<div[^>]*>\s*(Total|Final)\s+Score:\s*\d+\/100\s*<\/div>/gi, '')
+    .replace(/(Total|Final)\s+Score:\s*\d+\/100/gi, '');
+};
+
   const handleSubmit = async () => {
     if (!decision) return;
 
@@ -104,17 +125,19 @@ export default function ReviewSubmissionPage({ params }: { params: Promise<{ id:
             </p>
           </div>
 
-          {/* AI Grade */}
-          <div className="mb-6 p-6 bg-blue-50 border-2 border-[#138A8E]/20 rounded">
-            <h2 className="text-xl font-bold text-[#1a407c] mb-3">AI Evaluation</h2>
-            <p className="text-3xl font-bold text-[#1a407c] mb-4">
-              Score: {submission.aiEvaluation.score}/100
-            </p>
-            <div className="bg-white p-4 rounded">
-              <h3 className="font-semibold mb-2">Feedback:</h3>
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {submission.aiEvaluation.feedback}
-              </p>
+          {/* AI Grade - NO TOP SCORE, KEEP INDIVIDUAL MARKS */}
+          <div className="mb-6 p-6 bg-blue-50 border-2 border-blue-200 rounded">
+            <h2 className="text-xl font-bold text-[#1a407c] mb-4">AI Evaluation</h2>
+            <div className="bg-white p-6 rounded max-h-[600px] overflow-y-auto">
+              <h3 className="font-semibold mb-4 text-lg">Detailed Feedback:</h3>
+              {/* Render HTML with individual marks, but no section/total scores */}
+              <div 
+                className="prose max-w-none"
+                style={{ lineHeight: '1.8' }}
+                dangerouslySetInnerHTML={{ 
+                  __html: removeScoreTotalsFromFeedback(submission.aiEvaluation.feedback) 
+                }}
+              />
             </div>
           </div>
 
